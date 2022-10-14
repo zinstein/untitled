@@ -99,12 +99,12 @@ public class Inventory {
             output1.write(a.Supplier+ "\t" +a.ItemNumber + "\t" + a.Quantity );
             output1.newLine();
         }
-        output1.flush();
-        output2.flush();
         for (Goods a : arr) {
             output3.write(a.ItemNumber + "\t" + a.Quantity + "\t" + a.Supplier + "\t" + a.Description);
             output3.newLine();
         }
+        output1.flush();
+        output2.flush();
         output3.flush();
         output1.close();
         output2.close();

@@ -18,6 +18,7 @@ public class Inventory {
         BufferedWriter output1 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:/Shipping.txt")));
         BufferedWriter output2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:/Errors.txt")));
         BufferedWriter output3 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:/newInventory.txt")));
+
         String line;
         Goods good;
         ArrayList<Goods> arr = new ArrayList<>();
@@ -55,23 +56,21 @@ public class Inventory {
         //到货
         for (Goods a2 : arr2) {
             for (Goods a : arr) {
-                if (a2.Itemnumber.equals(a.Itemnumber)) a.Quantity += a2.Quantity;
+                if (a2.ItemNumber.equals(a.ItemNumber)) a.Quantity += a2.Quantity;
             }
         }
-
-        StringBuffer error = new StringBuffer("Custom编号 Item编号 数量");
 
         //发货
         ArrayList<Goods> ship = new ArrayList<>();
         arr3.sort(new SortHelper());
         for (Goods a3 : arr3) {
             for (Goods a : arr) {
-                if (a3.Itemnumber.equals(a.Itemnumber)) {
+                if (a3.ItemNumber.equals(a.ItemNumber)) {
                     if (a3.Quantity <= a.Quantity) {
                         a.Quantity -= a3.Quantity;
                         int i = 0;
                         for (Goods s : ship) {
-                            if (a3.Itemnumber.equals(s.Itemnumber)&&a3.Supplier.equals(s.Supplier)) {
+                            if (a3.ItemNumber.equals(s.ItemNumber)&&a3.Supplier.equals(s.Supplier)) {
                                 s.Quantity += a3.Quantity;
                                 i = 1;
                                 break;
@@ -80,7 +79,7 @@ public class Inventory {
                         if (i == 0) {
                             ship.add(a3);
                         }
-                    } else error.append("\n").append(a3.Supplier).append(" ").append(a3.Itemnumber).append(" ").append(a3.Quantity);
+                    } else output2.write(a3.Supplier+"\t"+a3.ItemNumber +"\t"+a3.Quantity+"\n");
                 }
             }
         }
@@ -88,24 +87,22 @@ public class Inventory {
         //删货
         for (Goods a4 : arr4) {
             for (Goods a : new ArrayList<>(arr)) {
-                if (a4.Itemnumber.equals(a.Itemnumber)) {
+                if (a4.ItemNumber.equals(a.ItemNumber)) {
                     if (a.Quantity == 0) arr.remove(a);
-                    else error.append("\n" + "0 ").append(a4.Itemnumber).append(" ").append(a.Quantity);
+                    else output2.write("\n0\t"+a4.ItemNumber +"\t"+a.Quantity);
                 }
             }
         }
 
         //写入
-        output1.write("客户编号 Item号 货物数量");
         for (Goods a : ship) {
+            output1.write(a.Supplier+ "\t" +a.ItemNumber + "\t" + a.Quantity );
             output1.newLine();
-            output1.write(a.Supplier+ " " +a.Itemnumber + " " + a.Quantity );
         }
         output1.flush();
-        output2.write(String.valueOf(error));
         output2.flush();
         for (Goods a : arr) {
-            output3.write(a.Itemnumber + " " + a.Quantity + " " + a.Supplier + " " + a.Description);
+            output3.write(a.ItemNumber + "\t" + a.Quantity + "\t" + a.Supplier + "\t" + a.Description);
             output3.newLine();
         }
         output3.flush();
@@ -116,13 +113,12 @@ public class Inventory {
 }
 
 class Goods {
-    String Itemnumber;//货物编号
+    String ItemNumber;//货物编号
     int Quantity;//货物数量
     String Supplier;//供应商编号
     String Description;//货物描述
-
-    Goods(String Itemnumber, int Quantity, String Supplier, String Description) {
-        this.Itemnumber = Itemnumber;
+    Goods(String ItemNumber, int Quantity, String Supplier, String Description) {
+        this.ItemNumber = ItemNumber;
         this.Quantity = Quantity;
         this.Supplier = Supplier;
         this.Description = Description;

@@ -2,51 +2,57 @@ package ch2;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.Socket;
+import java.util.HashMap;
 
 
 public class ServerFrame  extends Frame implements ActionListener{
     Panel p1,p2;
-    Label l;
-    TextField tf;
-    Button b;
+    Label l1,l2;
+    TextField tfPort,tfSay;
+    Button btnStart, btnSay;
     TextArea ta;
-    CheckboxGroup cbg;
-    Choice c;
+    Choice clientChoice;
+
+    int num=0;
+    HashMap<String, Socket> clientMap=new  HashMap<String, Socket>();
 
     ServerFrame(String title) {
         super(title);
 
-        p1=new Panel();
-        this.add(p1,"North");
-        l=new Label("Port:");   p1.add(l);
-        tf=new TextField("4000",44);   p1.add(tf);
-        b=new Button("listen");   p1.add(b);
-        b.addActionListener(this);
+        p1=new Panel();                    this.add(p1,"North");
+        l1=new Label("Port:");             p1.add(l1);
+        tfPort=new TextField("4000",40);   p1.add(tfPort);
+        btnStart=new Button("Start");     p1.add(btnStart);
+        btnStart.addActionListener(this);
 
-        ta=new TextArea(4,44); this.add(ta,"Center");
+        ta=new TextArea(10,40);             this.add(ta,"Center");
 
-        p2=new Panel();  this.add(p2,"South");
-        cbg=new CheckboxGroup();
-        Checkbox cb1=new Checkbox("swimming",cbg,true);   p2.add(cb1);
-        Checkbox cb2=new Checkbox("football",cbg,false);  p2.add(cb2);
-        Checkbox cb3=new Checkbox("basketball",cbg,false);p2.add(cb3);
-
-        c=new Choice();  p2.add(c);
-        c.add("red");c.add("blue");c.add("green");
+        p2=new Panel();                    this.add(p2,"South");
+        l2=new Label("Say:");              p2.add(l2);
+        clientChoice=new Choice();         p2.add(clientChoice);
+        clientChoice.add("Please...");
+        tfSay=new TextField(40);           p2.add(tfSay);
+        btnSay =new Button("Say");         p2.add(btnSay);
+        btnSay.addActionListener(this);
 
         this.addWindowListener(new MyHandler());
-        this.setSize(500,250);
+        this.pack();
         this.setVisible(true);
-        this.setLayout(null);
     }
 
     public static void main(String[] args) {
-        new ServerFrame("hi");
+        ServerFrame f=new ServerFrame("服务端");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ta.append("Server is listening on port 4000\n");
+        Object source=e.getSource();
+        if(source==btnStart){
+            ta.append("Server starting...\n");
+        }
+        else if(source== btnSay){
+        }
     }
 }
 

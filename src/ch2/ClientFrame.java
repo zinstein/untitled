@@ -14,6 +14,7 @@ public class ClientFrame  extends Frame implements ActionListener{
     Button btnConnect, btnSay;
     TextArea ta;
     Socket s1;
+    int flag=0;
 
     ClientFrame(String title) {
         super(title);
@@ -49,12 +50,13 @@ public class ClientFrame  extends Frame implements ActionListener{
             Object source=e.getSource();
             //启动客户端
             if(source==btnConnect){
-                int port=Integer.parseInt(tfPort.getText());
-                s1=new Socket("127.0.0.1",port);
-                ta.append("Connect to server..."+'\n');
-                while (true){
+                if(flag==0){
+                    int port=Integer.parseInt(tfPort.getText());
+                    s1=new Socket("127.0.0.1",port);
+                    ta.append("Connect to server..."+'\n');
                     Thread t=new ClientTXThread(s1);
                     t.start();
+                    flag++;
                 }
             }
             //客户端发送消息
@@ -80,7 +82,7 @@ public class ClientFrame  extends Frame implements ActionListener{
             try {
                 while(true) {
                     InputStream is = s2.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is,"GBK"));
                     String msg = reader.readLine();
                     ta.append(msg + '\n');
                 }

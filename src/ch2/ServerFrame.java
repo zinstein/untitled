@@ -19,6 +19,7 @@ public class ServerFrame  extends Frame implements ActionListener{
     ServerSocket server;
     int num=0;
     HashMap<String, Socket> clientMap=new  HashMap<String, Socket>();
+    int flag=0;
 
     ServerFrame(String title) {
         super(title);
@@ -54,9 +55,12 @@ public class ServerFrame  extends Frame implements ActionListener{
             Object source=e.getSource();
             //启动服务端
             if(source==btnStart){
-                Thread t=new ListenThread();
-                ta.append("server starting..."+'\n');
-                t.start();
+                if(flag==0){
+                    Thread t=new ListenThread();
+                    ta.append("server starting..."+'\n');
+                    t.start();
+                    flag++;
+                }
             }
             //服务端发送消息
             else if(source== btnSay){
@@ -105,7 +109,7 @@ public class ServerFrame  extends Frame implements ActionListener{
             try {
                 while (true){
                     InputStream is=s1.getInputStream();
-                    BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+                    BufferedReader reader=new BufferedReader(new InputStreamReader(is,"GBK"));
                     String msg=reader.readLine();
                     ta.append(msg+'\n');
                 }

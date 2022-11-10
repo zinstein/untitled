@@ -2,6 +2,8 @@ package ch2;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -14,6 +16,7 @@ public class ServerFrame  extends Frame implements ActionListener{
     TextArea ta;
     Choice clientChoice;
 
+    ServerSocket server;
     int num=0;
     HashMap<String, Socket> clientMap=new  HashMap<String, Socket>();
 
@@ -47,11 +50,68 @@ public class ServerFrame  extends Frame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source=e.getSource();
-        if(source==btnStart){
-            ta.append("Server starting...\n");
+        try{
+            Object source=e.getSource();
+            //启动服务端
+            if(source==btnStart){
+                Thread t=new ListenThread();
+                ta.append("server starting..."+'\n');
+                t.start();
+            }
+            //服务端发送消息
+            else if(source== btnSay){
+                String clientName=clientChoice.getSelectedItem();
+                Socket s1=clientMap.get(clientName);
+                OutputStream os=s1.getOutputStream();
+                BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os,"GBK"));
+                writer.write(tfSay.getText());
+                writer.newLine();
+                writer.flush();
+            }
+        }catch (Exception e2){
+            e2.printStackTrace();
         }
-        else if(source== btnSay){
+    }
+    //服务端连接
+    class ListenThread extends Thread{
+        @Override
+        public void run() {
+            try{
+                int port=Integer.parseInt(tfPort.getText());
+                server=new ServerSocket(port);
+                while (true){
+                    Socket s1=server.accept();
+                    num++;
+                    String clientName="client-"+num;
+                    ta.append(clientName+" connecting..."+"\n");
+                    clientChoice.add(clientName);
+                    clientMap.put(clientName,s1);
+                    Thread t=new ServerTXThread(s1);
+                    t.start();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+    //服务端接收
+    class ServerTXThread extends  Thread{
+        Socket s1;
+        public ServerTXThread(Socket s){
+            s1=s;
+        }
+        @Override
+        public void run() {
+            try {
+                while (true){
+                    InputStream is=s1.getInputStream();
+                    BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+                    String msg=reader.readLine();
+                    ta.append(msg+'\n');
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }

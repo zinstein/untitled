@@ -2,6 +2,9 @@ package ch2;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 
 public class ClientFrame  extends Frame implements ActionListener{
@@ -10,6 +13,7 @@ public class ClientFrame  extends Frame implements ActionListener{
     TextField tfIP,tfPort,tfSay;
     Button btnConnect, btnSay;
     TextArea ta;
+    Socket s1;
 
     ClientFrame(String title) {
         super(title);
@@ -36,17 +40,53 @@ public class ClientFrame  extends Frame implements ActionListener{
     }
 
     public static void main(String[] args) {
-        ClientFrame f=new ClientFrame("服务端");
+        ClientFrame f=new ClientFrame("客户端");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source=e.getSource();
-        if(source== btnConnect){
-            ta.append("Connect to server...\n");
+        try{
+            Object source=e.getSource();
+            //启动客户端
+            if(source==btnConnect){
+                int port=Integer.parseInt(tfPort.getText());
+                s1=new Socket("127.0.0.1",port);
+                ta.append("Connect to server..."+'\n');
+                while (true){
+                    Thread t=new ClientTXThread(s1);
+                    t.start();
+                }
+            }
+            //客户端发送消息
+            else if(source== btnSay){
+                OutputStream os=s1.getOutputStream();
+                BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os,"GBK"));
+                writer.write(tfSay.getText());
+                writer.newLine();
+                writer.flush();
+            }
+        }catch (Exception e2){
+            e2.printStackTrace();
         }
-        else if(source== btnSay){
+    }
+    //客户端接收
+    class ClientTXThread extends  Thread{
+        Socket s2;
+        public ClientTXThread(Socket s){
+            s2=s;
+        }
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    InputStream is = s2.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    String msg = reader.readLine();
+                    ta.append(msg + '\n');
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }
-

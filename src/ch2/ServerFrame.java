@@ -76,7 +76,7 @@ public class ServerFrame  extends Frame implements ActionListener{
             e2.printStackTrace();
         }
     }
-    //服务端连接
+    //监听线程
     class ListenThread extends Thread{
         @Override
         public void run() {
@@ -98,7 +98,7 @@ public class ServerFrame  extends Frame implements ActionListener{
             }
         }
     }
-    //服务端接收
+    //通信线程，接收消息
     class ServerTXThread extends  Thread{
         Socket s1;
         public ServerTXThread(Socket s){

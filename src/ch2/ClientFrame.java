@@ -27,11 +27,11 @@ public class ClientFrame  extends Frame implements ActionListener{
         btnConnect =new Button("Connect");     p1.add(btnConnect);
         btnConnect.addActionListener(this);
 
-        ta=new TextArea(10,40);             this.add(ta,"Center");
+        ta=new TextArea(10,50);             this.add(ta,"Center");
 
         p2=new Panel();                    this.add(p2,"South");
         l3=new Label("Say:");              p2.add(l3);
-        tfSay=new TextField(40);           p2.add(tfSay);
+        tfSay=new TextField(50);           p2.add(tfSay);
         btnSay =new Button("Say");         p2.add(btnSay);
         btnSay.addActionListener(this);
 
@@ -71,7 +71,7 @@ public class ClientFrame  extends Frame implements ActionListener{
             e2.printStackTrace();
         }
     }
-    //客户端接收
+    //通信线程，接收消息
     class ClientTXThread extends  Thread{
         Socket s2;
         public ClientTXThread(Socket s){

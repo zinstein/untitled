@@ -19,6 +19,7 @@ public class Inventory {
         BufferedWriter output2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:/Errors.txt")));
         BufferedWriter output3 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:/newInventory.txt")));
 
+        //读取货物数据
         String line;
         Goods good;
         ArrayList<Goods> arr = new ArrayList<>();

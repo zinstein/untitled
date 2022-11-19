@@ -51,8 +51,6 @@ public class Inventory {
                 arr4.add(good);
             }
         }
-        input1.close();
-        input2.close();
 
         //到货
         for (Goods a2 : arr2) {
@@ -104,6 +102,9 @@ public class Inventory {
             output3.write(a.ItemNumber + "\t" + a.Quantity + "\t" + a.Supplier + "\t" + a.Description);
             output3.newLine();
         }
+
+        input1.close();
+        input2.close();
         output1.flush();
         output2.flush();
         output3.flush();

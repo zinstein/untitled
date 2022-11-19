@@ -44,51 +44,51 @@ public class ClientFrame  extends Frame implements ActionListener{
         ClientFrame f=new ClientFrame("客户端");
     }
 
+@Override
+public void actionPerformed(ActionEvent e) {
+    try{
+        Object source=e.getSource();
+        //启动客户端
+        if(source==btnConnect){
+            if(flag==0){
+                int port=Integer.parseInt(tfPort.getText());
+                s1=new Socket("192.168.1.104",2000);
+                ta.append("Connect to server..."+'\n');
+                Thread t=new ClientTXThread(s1);
+                t.start();
+                flag++;
+            }
+        }
+        //客户端发送消息
+        else if(source== btnSay){
+            OutputStream os=s1.getOutputStream();
+            BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os,"GBK"));
+            writer.write(tfSay.getText());
+            writer.newLine();
+            writer.flush();
+        }
+    }catch (Exception e2){
+        e2.printStackTrace();
+    }
+}
+//通信线程，接收消息
+class ClientTXThread extends  Thread{
+    Socket s2;
+    public ClientTXThread(Socket s){
+        s2=s;
+    }
     @Override
-    public void actionPerformed(ActionEvent e) {
-        try{
-            Object source=e.getSource();
-            //启动客户端
-            if(source==btnConnect){
-                if(flag==0){
-                    int port=Integer.parseInt(tfPort.getText());
-                    s1=new Socket("127.0.0.1",port);
-                    ta.append("Connect to server..."+'\n');
-                    Thread t=new ClientTXThread(s1);
-                    t.start();
-                    flag++;
-                }
+    public void run() {
+        try {
+            while(true) {
+                InputStream is = s2.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is,"GBK"));
+                String msg = reader.readLine();
+                ta.append(msg + '\n');
             }
-            //客户端发送消息
-            else if(source== btnSay){
-                OutputStream os=s1.getOutputStream();
-                BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os,"GBK"));
-                writer.write(tfSay.getText());
-                writer.newLine();
-                writer.flush();
-            }
-        }catch (Exception e2){
-            e2.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
-    //通信线程，接收消息
-    class ClientTXThread extends  Thread{
-        Socket s2;
-        public ClientTXThread(Socket s){
-            s2=s;
-        }
-        @Override
-        public void run() {
-            try {
-                while(true) {
-                    InputStream is = s2.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is,"GBK"));
-                    String msg = reader.readLine();
-                    ta.append(msg + '\n');
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
+}
 }
